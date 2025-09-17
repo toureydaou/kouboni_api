@@ -34,6 +34,7 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: 1.24
+          cache: "go"
 
       # --------- Install tools ---------
       - name: Install golangci-lint
@@ -47,14 +48,60 @@ jobs:
           unzip sonar-scanner-cli-7.2.0.5079-linux-x64.zip
           echo "$PWD/sonar-scanner-cli-7.2.0.5079-linux-x64/bin" >> $GITHUB_PATH
 
-      # --------- Run linters ---------
-      - name: Run golangci-lint
-        run: golangci-lint run ./...
+      # --------- Run auth-service linters ---------
+      - name: Run golangci-lint auth-service
+        run: golangci-lint run ./auth-service/...
+
+      # --------- Run content-service linters ---------
+      - name: Run golangci-lint content-service
+        run: golangci-lint run ./content-service/...
+
+      # --------- Run ia-service linters ---------
+      - name: Run golangci-lint ia-service
+        run: golangci-lint run ./ia-service/...
+
+      # --------- Run content-service linters ---------
+      - name: Run golangci-lint payment-service
+        run: golangci-lint run ./payment-service/...
+
+      # --------- Run progress-service linters ---------
+      - name: Run golangci-lint progress-service
+        run: golangci-lint run ./progress-service/...
+
+      # --------- Run unit and integration tests auth-service ---------
+      - name: Run tests auth-service
+        run: |
+          cd auth-service
+          go test ./... -coverprofile=coverage.out
+
+      # --------- Run unit and integration tests content-service ---------
+      - name: Run tests content-service
+        run: |
+          cd content-service
+          go test ./... -coverprofile=coverage.out
+
+      # --------- Run unit and integration tests ia-service ---------
+      - name: Run tests ia-service
+        run: |
+          cd content-service
+          go test ./... -coverprofile=coverage.out
+
+      # --------- Run unit and integration tests payment-service ---------
+      - name: Run tests payment-service
+        run: |
+          cd payment-service
+          go test ./... -coverprofile=coverage.out
+
+      # --------- Run unit and integration tests progress-service ---------
+      - name: Run tests progress-service
+        run: |
+          cd content-service
+          go test ./... -coverprofile=coverage.out
 
       # --------- Run unit and integration tests ---------
-      - name: Run tests with coverage
+      - name: Concatenate all coverage tests
         run: |
-          go test ./... -coverprofile=coverage.out
+          go tool cover -func=$(find . -name coverage.out | tr '\n' ':' | sed 's/:$//')
 
       # --------- SonarQube Analysis ---------
       - name: SonarQube Analysis
@@ -63,7 +110,7 @@ jobs:
       # --------- Build Docker images ---------
       - name: Build Docker images
         run: |
-          docker-compose -f docker-compose.yml build
+          docker-compose -f docker-compose.yml build --parallel
 
       # Optionnel : push images si CI/CD production
       # - name: Push Docker images
