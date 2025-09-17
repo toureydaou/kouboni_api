@@ -43,9 +43,9 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y unzip wget
-          wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.12.0.31297-linux.zip
-          unzip sonar-scanner-cli-5.12.0.31297-linux.zip
-          echo "$PWD/sonar-scanner-5.12.0.31297-linux/bin" >> $GITHUB_PATH
+          wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-7.2.0.5079-linux-x64.zip
+          unzip sonar-scanner-cli-7.2.0.5079-linux-x64.zip
+          echo "$PWD/sonar-scanner-cli-7.2.0.5079-linux-x64/bin" >> $GITHUB_PATH
 
       # --------- Run linters ---------
       - name: Run golangci-lint
