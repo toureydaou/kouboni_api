@@ -111,7 +111,8 @@ jobs:
       # --------- Run unit and integration tests ---------
       - name: Concatenate all coverage tests
         run: |
-          go tool cover -func=$(find . -name coverage.out | tr '\n' ':' | sed 's/:$//')
+          go install github.com/wadey/gocovmerge@latest
+          gocovmerge auth-service/coverage.out content-service/coverage.out ia-service/coverage.out payment-service/coverage.out progress-service/coverage.out > coverage.out
 
       # --------- SonarQube Analysis ---------
       - name: SonarQube Analysis
