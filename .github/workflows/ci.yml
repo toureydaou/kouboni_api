@@ -1,0 +1,72 @@
+name: Go Microservices CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-test-lint-sonar:
+    runs-on: ubuntu-latest
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+    services:
+      mongo:
+        image: mongo:7
+        ports:
+          - 27017:27017
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+
+    steps:
+      # --------- Checkout code ---------
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # --------- Setup Go ---------
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.24
+
+      # --------- Install tools ---------
+      - name: Install golangci-lint
+        run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+
+      - name: Install sonar-scanner
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y unzip wget
+          wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.12.0.31297-linux.zip
+          unzip sonar-scanner-cli-5.12.0.31297-linux.zip
+          echo "$PWD/sonar-scanner-5.12.0.31297-linux/bin" >> $GITHUB_PATH
+
+      # --------- Run linters ---------
+      - name: Run golangci-lint
+        run: golangci-lint run ./...
+
+      # --------- Run unit and integration tests ---------
+      - name: Run tests with coverage
+        run: |
+          go test ./... -coverprofile=coverage.out
+
+      # --------- SonarQube Analysis ---------
+      - name: SonarQube Analysis
+        run: sonar-scanner -Dsonar.login=$SONAR_TOKEN -Dsonar.host.url=$SONAR_HOST_URL
+
+      # --------- Build Docker images ---------
+      - name: Build Docker images
+        run: |
+          docker-compose -f docker-compose.yml build
+
+      # Optionnel : push images si CI/CD production
+      # - name: Push Docker images
+      #   run: |
+      #     docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASS }}
+      #     docker-compose -f docker-compose.yml push

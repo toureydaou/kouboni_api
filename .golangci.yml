@@ -1,0 +1,13 @@
+run:
+  timeout: 5m
+linters:
+  enable:
+    - govet
+    - errcheck
+    - staticcheck
+    - gosec
+    - gocyclo
+    - dupl
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
