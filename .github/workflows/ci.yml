@@ -50,23 +50,33 @@ jobs:
 
       # --------- Run auth-service linters ---------
       - name: Run golangci-lint auth-service
-        run: golangci-lint run ./auth-service/...
+        run: |
+          cd auth-service
+          golangci-lint run ./...
 
       # --------- Run content-service linters ---------
       - name: Run golangci-lint content-service
-        run: golangci-lint run ./content-service/...
+        run: |
+          cd content-service
+          golangci-lint run ./...
 
       # --------- Run ia-service linters ---------
       - name: Run golangci-lint ia-service
-        run: golangci-lint run ./ia-service/...
+        run: |
+          cd ia-service
+          golangci-lint run ./...
 
       # --------- Run content-service linters ---------
       - name: Run golangci-lint payment-service
-        run: golangci-lint run ./payment-service/...
+        run: |
+          cd payment-service
+          golangci-lint run ./...
 
       # --------- Run progress-service linters ---------
       - name: Run golangci-lint progress-service
-        run: golangci-lint run ./progress-service/...
+        run: |
+          cd progress-service
+          golangci-lint run ./...
 
       # --------- Run unit and integration tests auth-service ---------
       - name: Run tests auth-service
