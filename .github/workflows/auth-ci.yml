@@ -10,7 +10,7 @@ on:
 
 jobs:
   lint:
-    runs-on: ubuntu:latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
@@ -31,7 +31,7 @@ jobs:
           golangci-lint run ./...
 
   test:
-    runs-on: ubuntu:latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
