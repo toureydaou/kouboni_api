@@ -34,36 +34,105 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: 1.24
+          cache: true
 
       # --------- Install tools ---------
       - name: Install golangci-lint
         run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 
-      - name: Install sonar-scanner
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y unzip wget
-          wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-7.2.0.5079-linux-x64.zip
-          unzip sonar-scanner-cli-7.2.0.5079-linux-x64.zip
-          echo "$PWD/sonar-scanner-cli-7.2.0.5079-linux-x64/bin" >> $GITHUB_PATH
+      # - name: Install sonar-scanner
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install -y unzip wget
+      #     wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-7.2.0.5079-linux-x64.zip
+      #     unzip sonar-scanner-cli-7.2.0.5079-linux-x64.zip
+      #     echo "$PWD/sonar-scanner-cli-7.2.0.5079-linux-x64/bin" >> $GITHUB_PATH
 
-      # --------- Run linters ---------
-      - name: Run golangci-lint
-        run: golangci-lint run ./...
-
-      # --------- Run unit and integration tests ---------
-      - name: Run tests with coverage
+      # --------- Run auth-service linters ---------
+      - name: Run golangci-lint auth-service
         run: |
+          cd auth-service
+          golangci-lint run ./...
+
+      # --------- Run content-service linters ---------
+      - name: Run golangci-lint content-service
+        run: |
+          cd content-service
+          golangci-lint run ./...
+
+      # --------- Run ia-service linters ---------
+      - name: Run golangci-lint ia-service
+        run: |
+          cd ia-service
+          golangci-lint run ./...
+
+      # --------- Run content-service linters ---------
+      - name: Run golangci-lint payment-service
+        run: |
+          cd payment-service
+          golangci-lint run ./...
+
+      # --------- Run progress-service linters ---------
+      - name: Run golangci-lint progress-service
+        run: |
+          cd progress-service
+          golangci-lint run ./...
+
+      # --------- Run unit and integration tests auth-service ---------
+      - name: Run tests auth-service
+        run: |
+          cd auth-service
           go test ./... -coverprofile=coverage.out
 
-      # --------- SonarQube Analysis ---------
+      # --------- Run unit and integration tests content-service ---------
+      - name: Run tests content-service
+        run: |
+          cd content-service
+          go test ./... -coverprofile=coverage.out
+
+      # --------- Run unit and integration tests ia-service ---------
+      - name: Run tests ia-service
+        run: |
+          cd ia-service
+          go test ./... -coverprofile=coverage.out
+
+      # --------- Run unit and integration tests payment-service ---------
+      - name: Run tests payment-service
+        run: |
+          cd payment-service
+          go test ./... -coverprofile=coverage.out
+
+      # --------- Run unit and integration tests progress-service ---------
+      - name: Run tests progress-service
+        run: |
+          cd progress-service
+          go test ./... -coverprofile=coverage.out
+
+      # --------- Run unit and integration tests ---------
+      - name: Concatenate all coverage tests
+        run: |
+          go install github.com/wadey/gocovmerge@latest
+          gocovmerge auth-service/coverage.out content-service/coverage.out ia-service/coverage.out payment-service/coverage.out progress-service/coverage.out > coverage.out
+
+      - name: Ensure test folders exist
+        run: |
+          mkdir -p auth-service/tests/unit auth-service/tests/integration auth-service/tests/e2e
+          mkdir -p content-service/tests/unit content-service/tests/integration content-service/tests/e2e
+          mkdir -p ia-service/tests/unit ia-service/tests/integration ia-service/tests/e2e
+          mkdir -p payment-service/tests/unit payment-service/tests/integration payment-service/tests/e2e
+          mkdir -p progress-service/tests/unit progress-service/tests/integration progress-service/tests/e2e
+
       - name: SonarQube Analysis
-        run: sonar-scanner -Dsonar.login=$SONAR_TOKEN -Dsonar.host.url=$SONAR_HOST_URL
+        uses: sonarsource/sonarcloud-github-action@v2
+        with:
+          args: >
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
 
       # --------- Build Docker images ---------
       - name: Build Docker images
         run: |
-          docker-compose -f docker-compose.yml build
+          docker compose -f docker-compose.yaml build --parallel
 
       # Optionnel : push images si CI/CD production
       # - name: Push Docker images
