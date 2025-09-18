@@ -1,18 +1,17 @@
 package main
 
 import (
-	"net/http"
+	"log"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	router := gin.Default()
-	router.GET("/auth", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "auth service",
-		})
-	})
-	router.Run(":8080")
+
+	err := router.Run(":8080")
+	if err != nil {
+		log.Fatalf("The auth service failed to start: %v \n", err)
+	}
 
 }
