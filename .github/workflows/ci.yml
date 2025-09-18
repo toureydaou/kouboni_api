@@ -132,7 +132,7 @@ jobs:
       # --------- Build Docker images ---------
       - name: Build Docker images
         run: |
-          docker compose -f docker-compose.yml build --parallel
+          docker compose -f docker-compose.yaml build --parallel
 
       # Optionnel : push images si CI/CD production
       # - name: Push Docker images
