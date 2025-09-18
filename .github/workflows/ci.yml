@@ -114,6 +114,14 @@ jobs:
           go install github.com/wadey/gocovmerge@latest
           gocovmerge auth-service/coverage.out content-service/coverage.out ia-service/coverage.out payment-service/coverage.out progress-service/coverage.out > coverage.out
 
+      - name: Ensure test folders exist
+        run: |
+          mkdir -p auth-service/tests/unit auth-service/tests/integration auth-service/tests/e2e
+          mkdir -p content-service/tests/unit content-service/tests/integration content-service/tests/e2e
+          mkdir -p ia-service/tests/unit ia-service/tests/integration ia-service/tests/e2e
+          mkdir -p payment-service/tests/unit payment-service/tests/integration payment-service/tests/e2e
+          mkdir -p progress-service/tests/unit progress-service/tests/integration progress-service/tests/e2e
+
       - name: SonarQube Analysis
         uses: sonarsource/sonarcloud-github-action@v2
         with:
