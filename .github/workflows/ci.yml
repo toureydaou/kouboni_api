@@ -93,7 +93,7 @@ jobs:
       # --------- Run unit and integration tests ia-service ---------
       - name: Run tests ia-service
         run: |
-          cd content-service
+          cd ia-service
           go test ./... -coverprofile=coverage.out
 
       # --------- Run unit and integration tests payment-service ---------
@@ -105,7 +105,7 @@ jobs:
       # --------- Run unit and integration tests progress-service ---------
       - name: Run tests progress-service
         run: |
-          cd content-service
+          cd progress-service
           go test ./... -coverprofile=coverage.out
 
       # --------- Run unit and integration tests ---------
