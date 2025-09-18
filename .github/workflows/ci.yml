@@ -42,14 +42,6 @@ jobs:
       - name: Install golangci-lint
         run: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | sh -s -- -b $(go env GOPATH)/bin v2.4.0
 
-      # - name: Install sonar-scanner
-      #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install -y unzip wget
-      #     wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-7.2.0.5079-linux-x64.zip
-      #     unzip sonar-scanner-cli-7.2.0.5079-linux-x64.zip
-      #     echo "$PWD/sonar-scanner-cli-7.2.0.5079-linux-x64/bin" >> $GITHUB_PATH
-
       # --------- Run auth-service linters ---------
       - name: Run golangci-lint auth-service
         run: |
