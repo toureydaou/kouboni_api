@@ -46,3 +46,14 @@ jobs:
         run: |
           cd auth-service
           go test ./... -coverprofile=coverage.out
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Build Docker Image for Auth service
+        run: |
+          cd auth-service
+          docker build -t auth-service:latest .
