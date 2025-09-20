@@ -32,7 +32,7 @@ services:
     build: ./auth-service
     container_name: auth-container
     environment:
-      - MONGO_URI=mongodb://mongo:27017/koubonidb
+      - MONGO_URI=mongodb://mongo:27017/authdb
       - REDIS_ADDR=redis:6379
     labels:
       - "traefik.enable=true"

@@ -5,6 +5,7 @@ import (
 	"context"
 	"log"
 	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,14 +21,14 @@ func main() {
 	repository.ConnectMongo(mongoUri)
 
 	defer func() {
-		err := repository.Client.Disconnect(context.Background())
-		if err != nil {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		if err := repository.Client.Disconnect(ctx); err != nil {
 			log.Fatalf("Error while disconnecting from auth-service database %v", err)
 		}
 	}()
 
-	err := router.Run(":8080")
-	if err != nil {
+	if err := router.Run(":8080"); err != nil {
 		log.Fatalf("The auth service failed to start: %v \n", err)
 
 	}
