@@ -1,20 +1,17 @@
 package unit_test
 
 import (
+	m "auth-service/internal/models"
 	"auth-service/internal/utils"
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func TestHashPassword(t *testing.T) {
 	password := "azerty1234$"
-	hash, err := utils.HashPassword(password)
-
-	if err != nil {
-		t.Fatalf("HashPassword return an error %v", err)
-	}
+	hash := utils.HashPassword(password)
 
 	if len(hash) == 0 {
 		t.Fatalf("HashPassword must not be empty")
@@ -25,15 +22,34 @@ func TestHashPassword(t *testing.T) {
 
 func TestCheckPasswordHash(t *testing.T) {
 	password := "azerty1234$"
-	hash, err := utils.HashPassword(password)
-
-	fmt.Print(hash)
-
-	if err != nil {
-		t.Fatalf("HashPassword return an error %v", err)
-	}
+	hash := utils.HashPassword(password)
 
 	assert.True(t, utils.CheckPasswordHash(password, hash))
 	assert.False(t, utils.CheckPasswordHash("wrong_password", hash))
+
+}
+
+func TestToUserResponse(t *testing.T) {
+	userId := primitive.NewObjectID()
+
+	user := m.User{
+		ID:          userId,
+		FirstName:   "John",
+		Surname:     "Doe",
+		Email:       "johndoe@email.com",
+		PhoneNumber: "90123456",
+		Password:    utils.HashPassword("$aze1ty*"),
+	}
+
+	expectedUserResponse := m.UserResponse{
+		ID:          userId.Hex(),
+		FullName:    "John Doe",
+		Email:       "johndoe@email.com",
+		PhoneNumber: "90123456",
+	}
+
+	userResponse := utils.ToUserResponse(user)
+
+	assert.Equal(t, userResponse, expectedUserResponse)
 
 }
