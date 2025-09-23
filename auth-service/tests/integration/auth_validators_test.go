@@ -9,6 +9,22 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+type NameFieldTest struct {
+	Name string `validate:"required,alpha,min=1"`
+}
+
+type SurnameFieldTest struct {
+	Surname string `validate:"required,alpha,min=1"`
+}
+
+type GenderFieldTest struct {
+	Gender string `validate:"required,oneof= male female"`
+}
+
+type PasswordFieldTest struct {
+	Password string `validate:"required,min=8,alphanum,password"`
+}
+
 type EmailFieldTest struct {
 	Email string `validate:"required,email,unique_email"`
 }
@@ -81,4 +97,74 @@ func TestTogoleseNumberValidator(t *testing.T) {
 	assert.Error(t, err)
 	err = utils.ValidateRegistering.Struct(dto3)
 	assert.NoError(t, err)
+}
+
+func TestNameValidator(t *testing.T) {
+	client := SetupDB(t)
+	defer CloseDB(t, client)
+
+	collection := client.Database("auth_test_db").Collection("users")
+
+	utils.RegisterCustomValidators(collection)
+
+	dto := NameFieldTest{Name: ""}
+	dto2 := NameFieldTest{Name: "1234"}
+	dto3 := NameFieldTest{Name: "john"}
+
+	assert.Error(t, utils.ValidateRegistering.Struct(dto))
+	assert.Error(t, utils.ValidateRegistering.Struct(dto2))
+	assert.NoError(t, utils.ValidateRegistering.Struct(dto3))
+}
+
+func TestSurnameValidator(t *testing.T) {
+	client := SetupDB(t)
+	defer CloseDB(t, client)
+
+	collection := client.Database("auth_test_db").Collection("users")
+
+	utils.RegisterCustomValidators(collection)
+
+	dto := SurnameFieldTest{Surname: ""}
+	dto2 := SurnameFieldTest{Surname: "1234"}
+	dto3 := SurnameFieldTest{Surname: "doe"}
+
+	assert.Error(t, utils.ValidateRegistering.Struct(dto))
+	assert.Error(t, utils.ValidateRegistering.Struct(dto2))
+	assert.NoError(t, utils.ValidateRegistering.Struct(dto3))
+}
+
+func TestGenderValidator(t *testing.T) {
+	client := SetupDB(t)
+	defer CloseDB(t, client)
+
+	collection := client.Database("auth_test_db").Collection("users")
+
+	utils.RegisterCustomValidators(collection)
+
+	dto := GenderFieldTest{Gender: ""}
+	dto2 := GenderFieldTest{Gender: "male"}
+	dto3 := GenderFieldTest{Gender: "female"}
+
+	assert.Error(t, utils.ValidateRegistering.Struct(dto))
+	assert.NoError(t, utils.ValidateRegistering.Struct(dto2))
+	assert.NoError(t, utils.ValidateRegistering.Struct(dto3))
+}
+
+func TestPasswordValidator(t *testing.T) {
+	client := SetupDB(t)
+	defer CloseDB(t, client)
+
+	collection := client.Database("auth_test_db").Collection("users")
+
+	utils.RegisterCustomValidators(collection)
+
+	dto := PasswordFieldTest{Password: ""}
+	dto2 := PasswordFieldTest{Password: "abcd"}
+	dto3 := PasswordFieldTest{Password: "abcdefghi"}
+	dto4 := PasswordFieldTest{Password: "abdcdefg1234"}
+
+	assert.Error(t, utils.ValidateRegistering.Struct(dto))
+	assert.Error(t, utils.ValidateRegistering.Struct(dto2))
+	assert.Error(t, utils.ValidateRegistering.Struct(dto3))
+	assert.NoError(t, utils.ValidateRegistering.Struct(dto4))
 }
