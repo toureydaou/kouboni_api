@@ -34,7 +34,7 @@ func TestToUserResponse(t *testing.T) {
 
 	user := m.User{
 		ID:          userId,
-		FirstName:   "John",
+		Name:        "John",
 		Surname:     "Doe",
 		Email:       "johndoe@email.com",
 		PhoneNumber: "90123456",

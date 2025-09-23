@@ -15,7 +15,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func SetupDB(t *testing.T) (*mongo.Collection, *mongo.Client) {
+func SetupDB(t *testing.T) *mongo.Client {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
@@ -30,10 +30,10 @@ func SetupDB(t *testing.T) (*mongo.Collection, *mongo.Client) {
 	collection := database.Collection("users")
 
 	if err := collection.Drop(ctx); err != nil {
-		t.Fatalf("Failed to drop collection")
+		t.Fatalf("Failed to drop collection %v", err)
 	}
 
-	return collection, client
+	return client
 }
 
 func CloseDB(t *testing.T, client *mongo.Client) {
@@ -48,19 +48,22 @@ func CloseDB(t *testing.T, client *mongo.Client) {
 func TestCreateUser(t *testing.T) {
 	// test the insertion of an user
 
-	usersCollection, client := SetupDB(t)
+	client := SetupDB(t)
 
 	defer CloseDB(t, client)
 
 	user := u.User{
-		FirstName:   "John",
+		Name:        "John",
 		Surname:     "Doe",
+		Gender:      "M",
 		Email:       "johndoe@email.com",
 		PhoneNumber: "90123456",
 		Password:    utils.HashPassword("azerty$123"),
 	}
 
-	if err := repository.CreateUser(user); err != nil {
+	collection := client.Database("auth_test_db").Collection("users")
+
+	if err := repository.CreateUser(user, collection); err != nil {
 		t.Fatalf("Error while inserting user %v", err)
 	}
 
@@ -69,7 +72,7 @@ func TestCreateUser(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	if err := usersCollection.FindOne(ctx, bson.M{"email": user.Email}).Decode(&foundUser); err != nil {
+	if err := collection.FindOne(ctx, bson.M{"email": user.Email}).Decode(&foundUser); err != nil {
 		t.Fatalf("Error while quering users %v", err)
 	}
 
