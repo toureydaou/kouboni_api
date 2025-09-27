@@ -23,8 +23,8 @@ type UserResponse struct {
 type UserRegister struct {
 	Name        string `json:"name" validate:"required,alpha,min=1"`
 	Surname     string `json:"surname" validate:"required,alpha,min=1"`
-	Email       string `json:"email" validate:"email,unique_email"`
+	Email       string `json:"email" validate:"email"`
 	Gender      string `json:"gender" validate:"required,oneof= male female"`
-	PhoneNumber string `json:"telephone" validate:"required,unique_phone,togolese_number"`
-	Password    string `json:"password" validate:"required,min=8,alphanum,password"`
+	PhoneNumber string `json:"telephone" validate:"required,togolese_number"`
+	Password    string `json:"password" validate:"required,min=8,password"`
 }
