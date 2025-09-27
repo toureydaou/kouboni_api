@@ -7,15 +7,15 @@ import (
 	"context"
 )
 
-type RegisterService struct {
+type AuthService struct {
 	repo repository.UserRepository
 }
 
-func NewRegisterService(repo repository.UserRepository) *RegisterService {
-	return &RegisterService{repo: repo}
+func NewAuthService(repo repository.UserRepository) *AuthService {
+	return &AuthService{repo: repo}
 }
 
-func (s *RegisterService) RegisterUser(ctx context.Context, userRegister u.UserRegister) (response *u.UserResponse, error error) {
+func (s *AuthService) RegisterUser(ctx context.Context, userRegister u.UserRegister) (response *u.UserResponse, error error) {
 
 	hashedPassword := utils.HashPassword(userRegister.Password)
 
