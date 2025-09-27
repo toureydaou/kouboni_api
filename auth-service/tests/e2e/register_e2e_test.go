@@ -21,6 +21,8 @@ const USER_NOT_FOUND = "User not found"
 const USER_COLLECTION = "users"
 const ERROR_USER_QUERYING = "Error while quering users"
 const TEST_DB = "auth_test_db"
+const TEST_REGISTER_EMAIL_DB = "auth_email_test_db"
+const TEST_REGISTER_PHONE_DB = "auth_phone_test_db"
 
 func SetupDB(t *testing.T) *mongo.Client {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -103,6 +105,7 @@ func TestRegisterSuccess(t *testing.T) {
 	repo := repository.NewUserRepository(db.Database(TEST_DB), USER_COLLECTION)
 	r := api.SetupRoutes(repo)
 	ts := httptest.NewServer(r)
+	defer ts.Close()
 
 	initUser()
 
@@ -130,11 +133,12 @@ func TestRegisterDuplicatedEmail(t *testing.T) {
 	db := SetupDB(t)
 	defer CloseDB(t, db)
 
-	repo := repository.NewUserRepository(db.Database(TEST_DB), USER_COLLECTION)
+	repo := repository.NewUserRepository(db.Database(TEST_REGISTER_EMAIL_DB), USER_COLLECTION)
 
 	r := api.SetupRoutes(repo)
 
 	ts := httptest.NewServer(r)
+	defer ts.Close()
 
 	initUser()
 
@@ -174,7 +178,7 @@ func TestRegisterDuplicatedPhoneNumber(t *testing.T) {
 	db := SetupDB(t)
 	defer CloseDB(t, db)
 
-	repo := repository.NewUserRepository(db.Database(TEST_DB), USER_COLLECTION)
+	repo := repository.NewUserRepository(db.Database(TEST_REGISTER_PHONE_DB), USER_COLLECTION)
 
 	r := api.SetupRoutes(repo)
 
