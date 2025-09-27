@@ -72,6 +72,9 @@ jobs:
           cd progress-service
           golangci-lint run ./...
 
+      - name: Run containers
+        run: docker compose -f docker-compose.yaml up
+
       # --------- Run unit and integration tests auth-service ---------
       - name: Run tests auth-service
         run: |
@@ -122,6 +125,9 @@ jobs:
           args: >
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+
+      - name: Run containers
+        run: docker compose -f docker-compose.yaml stop
 
       # --------- Build Docker images ---------
       - name: Build Docker images
