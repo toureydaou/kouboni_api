@@ -42,10 +42,16 @@ jobs:
           go-version: 1.24
           cache: true
 
+      - name: Start containers
+        run: docker compose -f docker-compose.yaml up -d
+
       - name: Run tests auth-service
         run: |
           cd auth-service
-          go test ./... -coverprofile=coverage.out
+          go test ./tests/... -coverpkg=./internal/... -coverprofile=coverage.out
+
+      - name: Stop containers
+        run: docker compose -f docker-compose.yaml stop
 
   build:
     runs-on: ubuntu-latest

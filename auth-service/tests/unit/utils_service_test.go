@@ -34,8 +34,9 @@ func TestToUserResponse(t *testing.T) {
 
 	user := m.User{
 		ID:          userId,
-		FirstName:   "John",
+		Name:        "John",
 		Surname:     "Doe",
+		Gender:      "male",
 		Email:       "johndoe@email.com",
 		PhoneNumber: "90123456",
 		Password:    utils.HashPassword("$aze1ty*"),
@@ -44,12 +45,13 @@ func TestToUserResponse(t *testing.T) {
 	expectedUserResponse := m.UserResponse{
 		ID:          userId.Hex(),
 		FullName:    "John Doe",
+		Gender:      "male",
 		Email:       "johndoe@email.com",
 		PhoneNumber: "90123456",
 	}
 
 	userResponse := utils.ToUserResponse(user)
 
-	assert.Equal(t, userResponse, expectedUserResponse)
+	assert.Equal(t, *userResponse, expectedUserResponse)
 
 }
