@@ -42,8 +42,11 @@ jobs:
           go-version: 1.24
           cache: true
 
-      - name: Run containers
-        run: docker compose -f docker-compose.yaml up
+      - name: Build containers
+        run: docker compose -f docker-compose.yaml build
+
+      - name: Start containers
+        run: docker compose -f docker-compose.yaml start
 
       - name: Run tests auth-service
         run: |

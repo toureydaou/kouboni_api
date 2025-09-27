@@ -72,8 +72,11 @@ jobs:
           cd progress-service
           golangci-lint run ./...
 
+      - name: Build containers
+        run: docker compose -f docker-compose.yaml build
+
       - name: Run containers
-        run: docker compose -f docker-compose.yaml up
+        run: docker compose -f docker-compose.yaml start
 
       # --------- Run unit and integration tests auth-service ---------
       - name: Run tests auth-service
