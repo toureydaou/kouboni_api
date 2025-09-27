@@ -51,6 +51,8 @@ func CloseDB(t *testing.T, client *mongo.Client) {
 
 var userRegister *u.UserRegister
 var userRegister2 *u.UserRegister
+var userRegister3 *u.UserRegister
+var userRegister4 *u.UserRegister
 
 func initUser() {
 	userRegister = &u.UserRegister{
@@ -63,11 +65,29 @@ func initUser() {
 	}
 
 	userRegister2 = &u.UserRegister{
+		Name:        "John",
+		Surname:     "Doe",
+		Gender:      "female",
+		Email:       "johndoe@email.com",
+		PhoneNumber: "90778899",
+		Password:    "azerty123",
+	}
+
+	userRegister3 = &u.UserRegister{
 		Name:        "Suzanne",
 		Surname:     "Doe",
 		Gender:      "female",
 		Email:       "suzanne@email.com",
-		PhoneNumber: "90123456",
+		PhoneNumber: "70123456",
+		Password:    "azerty123",
+	}
+
+	userRegister4 = &u.UserRegister{
+		Name:        "Karen",
+		Surname:     "Dafoe",
+		Gender:      "female",
+		Email:       "karendafoe@email.com",
+		PhoneNumber: "70123456",
 		Password:    "azerty123",
 	}
 
@@ -136,6 +156,11 @@ func TestRegisterDuplicatedEmail(t *testing.T) {
 
 	assert.Equal(t, http.StatusCreated, resp.StatusCode)
 
+	body, err = json.Marshal(*userRegister2)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	resp, err = http.Post(ts.URL+REGISTER_ENDPOINT, HEADER_CONTENT_TYPE, bytes.NewBuffer(body))
 	if err != nil {
 		t.Fatal(err)
@@ -157,7 +182,7 @@ func TestRegisterDuplicatedPhoneNumber(t *testing.T) {
 
 	initUser()
 
-	body, err := json.Marshal(*userRegister)
+	body, err := json.Marshal(*userRegister3)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -175,7 +200,7 @@ func TestRegisterDuplicatedPhoneNumber(t *testing.T) {
 
 	assert.Equal(t, http.StatusCreated, resp.StatusCode)
 
-	body, err = json.Marshal(*userRegister)
+	body, err = json.Marshal(*userRegister4)
 	if err != nil {
 		t.Fatal(err)
 	}
