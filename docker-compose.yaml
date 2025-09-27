@@ -97,4 +97,4 @@ services:
 volumes:
   mongo_data:
   redis_data:
-  sonar_db_data:
+#  sonar_db_data:

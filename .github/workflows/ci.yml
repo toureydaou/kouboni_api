@@ -76,31 +76,31 @@ jobs:
       - name: Run tests auth-service
         run: |
           cd auth-service
-          go test ./... -coverprofile=coverage.out
+          go test ./tests/... -coverpkg=./internal/... -coverprofile=coverage.out
 
       # --------- Run unit and integration tests content-service ---------
       - name: Run tests content-service
         run: |
           cd content-service
-          go test ./... -coverprofile=coverage.out
+          go test ./tests/... -coverpkg=./internal/... -coverprofile=coverage.out
 
       # --------- Run unit and integration tests ia-service ---------
       - name: Run tests ia-service
         run: |
           cd ia-service
-          go test ./... -coverprofile=coverage.out
+          go test ./tests/... -coverpkg=./internal/... -coverprofile=coverage.out
 
       # --------- Run unit and integration tests payment-service ---------
       - name: Run tests payment-service
         run: |
           cd payment-service
-          go test ./... -coverprofile=coverage.out
+          go test ./tests/... -coverpkg=./internal/... -coverprofile=coverage.out
 
       # --------- Run unit and integration tests progress-service ---------
       - name: Run tests progress-service
         run: |
           cd progress-service
-          go test ./... -coverprofile=coverage.out
+          go test ./tests/... -coverpkg=./internal/... -coverprofile=coverage.out
 
       # --------- Run unit and integration tests ---------
       - name: Concatenate all coverage tests

@@ -6,7 +6,6 @@ RUN go mod download
 COPY ./api ./api
 COPY ./cmd ./cmd
 COPY ./internal ./internal
-COPY ./tests ./tests
 COPY .golangci.yml .
 RUN go build -o service ./cmd/main.go
 
